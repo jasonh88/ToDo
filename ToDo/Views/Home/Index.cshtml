@@ -4,10 +4,43 @@
 }
 <div ng-controller="taskController as tc">
 
-    <div ng-repeat="task in tc.tasks">
-        <p>{{task.Task}}</p>
-    </div>
+    <div class="container">
+        <div class="col-md-1"></div>
+        <div class="col-md-3 panel panel-primary" style="padding:0px;">
+            <div class="panel-heading"> Add a Task</div>
+            <div class="panel-body">
+                <form name="taskInput">
+                    <label for="task">Task</label>
+                    <input type="text" name="task" placeholder="Enter a task" ng-model="tc.insertTask.Task"/><br />
+                <label for="notes">Notes(Optional)</label>
+                    <input type="text" name="notes" placeholder="Leave some notes" ng-model="tc.insertTask.Notes"><br />
+                    <label for="due">Deadline</label>
+                    <input type="datetime" name="due" ng-model="tc.insertTask.Due"/><br />
+            
+                </form>
 
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-3 panel panel-primary" style="padding:0px;">
+            <div class="panel-heading">
+                <h2 style="text-align:center">Tasks</h2>
+            </div>
+            <div class="panel-body">
+
+                <div ng-repeat="task in tc.tasks">
+                    <h3><input type="checkbox" /> {{task.Task}}</h3>
+                    <h5>{{task.Notes}}</h5>
+                    <h5>{{task.Due}}</h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+
+        </div>
+        <div class="col-md-1"></div>
+    </div>
 </div>
 
 
@@ -22,10 +55,10 @@
             function TaskService($http) {
                 var vm = this;
                 return {
-                    getTasks: _getTasks
-                    //addTasks: _addTasks,
-                    //updateTasks: _updateTasks,
-                    //deleteTasks: _deleteTasks
+                    getTasks: _getTasks,
+                    addTasks: _addTasks,
+                    updateTasks: _updateTasks,
+                    deleteTasks: _deleteTasks
                 }
 
                 //GET TASKS
@@ -40,6 +73,43 @@
                 }
                 //END GET TASKS
 
+                //ADD TASKS
+                function _addTasks(payload) {
+                    return $http.post('/api/tasks', payload)
+                        .then(onSuccessPostTasks)
+                        .catch(onError);
+                }
+
+                function onSuccessPostTasks(response) {
+                    return response.data;
+                }
+                //END POST TASKS
+
+                //UPDATE TASKS
+                function _updateTasks(payload) {
+                    return $http.put('/api/tasks', payload)
+                        .then(onSuccessUpdateTasks)
+                        .catch(onError);
+                }
+
+                function onSuccessUpdateTasks(response) {
+                    return response.data;
+                }
+                //END UPDATE TASKS
+
+                //DELETE TASKS
+                function _deleteTasks(id) {
+                    return $http.delete('/api/tasks', id)
+                        .then(onSuccessDeleteTasks)
+                        .catch(onError);
+                }
+
+                function onSuccessDeleteTasks(response) {
+                    return response.data;
+                }
+
+                //END DELETE TASKS
+
                 function onError() {
                     console.log("ERROR!");
                 }
@@ -50,32 +120,42 @@
     </script>
 
     <script>
-        (function (){
-        angular.module('myApp').controller('taskController', TaskController);
+        (function () {
+            angular.module('myApp').controller('taskController', TaskController);
 
-        TaskController.$inject = ['$scope', 'taskService'];
+            TaskController.$inject = ['$scope', 'taskService'];
 
-        function TaskController($scope, taskService) {
-            var vm = this;
-            vm.$scope = $scope;
-            vm.taskService = taskService;
-            vm.tasks = null;
+            function TaskController($scope, taskService) {
+                var vm = this;
+                vm.$scope = $scope;
+                vm.taskService = taskService;
+                vm.tasks = [];
+                vm.insertTask = {};
+
+                vm.addTask = _addTask;
+                render();
+
+                function render() {
+                    taskService.getTasks()
+                        .then(onSuccessGetTasks);
+                }
+
+                function onSuccessGetTasks(data) {
+                    vm.tasks = data;
+                }
+
+                function _addTask() {
+                    taskService.addTasks()
+                        .then(onSuccessPostTasks);
+                }
+
+                function onSuccessPostTasks(response) {
+                        
+                }
 
 
-            render();
 
-            function render() {
-                taskService.getTasks()
-                    .then(onSuccessGetTasks);
             }
-
-            function onSuccessGetTasks(data) {
-                vm.tasks = data;
-            }
-
-
-
-        }
 
         })();
 
