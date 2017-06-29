@@ -96,8 +96,10 @@ namespace ToDo.Services
                         t.ID = reader.GetInt32(startingIndex++);
                         t.Task = reader.GetString(startingIndex++);
                         t.Notes = reader.GetString(startingIndex++);
+                        //Add null check later
                         t.Due = reader.GetDateTime(startingIndex++);
                         t.Completed = reader.GetBoolean(startingIndex++);
+                        t.DateModified = reader.GetDateTime(startingIndex++);
 
                         taskList.Add(t);
                     }

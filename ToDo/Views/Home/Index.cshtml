@@ -7,15 +7,17 @@
     <div class="container">
         <div class="col-md-1"></div>
         <div class="col-md-3 panel panel-primary" style="padding:0px;">
-            <div class="panel-heading"> Add a Task</div>
+            <div class="panel-heading"> <h4 style="text-align:center">Add a Task</h4></div>
             <div class="panel-body">
                 <form name="taskInput">
-                    <label for="task">Task</label>
-                    <input type="text" name="task" placeholder="Enter a task" ng-model="tc.insertTask.Task"/><br />
-                <label for="notes">Notes(Optional)</label>
-                    <input type="text" name="notes" placeholder="Leave some notes" ng-model="tc.insertTask.Notes"><br />
-                    <label for="due">Deadline</label>
-                    <input type="datetime" name="due" ng-model="tc.insertTask.Due"/><br />
+                    <label for="task">Task</label><br />
+                    <input type="text" name="task" placeholder="Enter a task" ng-model="form.Task"/><br /><br />
+                <label for="notes">Notes(Optional)</label><br />
+                    <textarea name="notes" placeholder="Leave some notes" ng-model="form.Notes"></textarea><br /><br />
+                    <label for="due">Deadline</label><br />
+                    <input type="datetime-local" name="due" ng-model="form.Due"/><br /><br />
+
+                    <button type="submit" class="btn btn-primary" ng-click="tc.addTask(form)">Add</button>
             
                 </form>
 
@@ -24,7 +26,7 @@
         <div class="col-md-1"></div>
         <div class="col-md-3 panel panel-primary" style="padding:0px;">
             <div class="panel-heading">
-                <h2 style="text-align:center">Tasks</h2>
+                <h4 style="text-align:center">Tasks</h4>
             </div>
             <div class="panel-body">
 
@@ -35,9 +37,19 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-3 panel panel-primary" style="padding:0px;">
+            <div class="panel-heading">
+                <h4 style="text-align:center">Completed Tasks</h4>
+            </div>
+            <div class="panel-body">
 
-        <div class="col-md-3">
-
+                <div ng-repeat="task in tc.tasks" ng-if="task.Completed == false">
+                    <h3>{{task.Task}}</h3>
+                    <h5>{{task.Notes}}</h5>
+                    <h5>{{task.DateModified}}</h5>
+                </div>
+            </div>
         </div>
         <div class="col-md-1"></div>
     </div>
@@ -144,8 +156,8 @@
                     vm.tasks = data;
                 }
 
-                function _addTask() {
-                    taskService.addTasks()
+                function _addTask(form) {
+                    taskService.addTasks(form)
                         .then(onSuccessPostTasks);
                 }
 

@@ -12,6 +12,6 @@ namespace ToDo.Models
         public string Notes { get; set; }
         public DateTime? Due { get; set; }
         public bool Completed { get; set; }
-
+        public DateTime DateModified { get; set; }
     }
 }
