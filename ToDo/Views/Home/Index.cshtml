@@ -30,10 +30,11 @@
             </div>
             <div class="panel-body">
 
-                <div ng-repeat="task in tc.tasks">
-                    <h3><input type="checkbox" /> {{task.Task}}</h3>
-                    <h5>{{task.Notes}}</h5>
-                    <h5>{{task.Due}}</h5>
+                <div ng-repeat="task in tc.tasks" ng-if="task.Completed == false">
+                    <h5><input type="checkbox" /> {{task.Task}}</h5><button class="pull-right" ng-click="tc.deleteTask(task)">Delete</button>
+                    <h6>{{task.Notes}}</h6>
+                    <h6>{{task.Due}}</h6>
+                    
                 </div>
             </div>
         </div>
@@ -44,7 +45,7 @@
             </div>
             <div class="panel-body">
 
-                <div ng-repeat="task in tc.tasks" ng-if="task.Completed == false">
+                <div ng-repeat="task in tc.tasks" ng-if="task.Completed == true">
                     <h3>{{task.Task}}</h3>
                     <h5>{{task.Notes}}</h5>
                     <h5>{{task.DateModified}}</h5>
@@ -111,7 +112,7 @@
 
                 //DELETE TASKS
                 function _deleteTasks(id) {
-                    return $http.delete('/api/tasks', id)
+                    return $http.delete('/api/tasks/' + id)
                         .then(onSuccessDeleteTasks)
                         .catch(onError);
                 }
@@ -142,9 +143,11 @@
                 vm.$scope = $scope;
                 vm.taskService = taskService;
                 vm.tasks = [];
-                vm.insertTask = {};
+                vm.selectedTask = null;
+                vm.deleteTask = _deleteTask;
 
                 vm.addTask = _addTask;
+         
                 render();
 
                 function render() {
@@ -159,14 +162,26 @@
                 function _addTask(form) {
                     taskService.addTasks(form)
                         .then(onSuccessPostTasks);
+                    vm.selectedTask = form;
+                    
                 }
 
                 function onSuccessPostTasks(response) {
-                        
+                    vm.selectedTask.ID = response;
+                    vm.tasks.push(vm.selectedTask);
+                    vm.selectedTask = null;
                 }
 
+                function _deleteTask(task) {
+                    taskService.deleteTasks(task.ID)
+                        .then(onSuccessDeleteTasks);
+                    vm.selectedTask = task;
+                }
 
-
+                function onSuccessDeleteTasks() {
+                    var index = vm.tasks.indexOf(vm.selectedTask);
+                    vm.tasks.splice(index);
+                }
             }
 
         })();
