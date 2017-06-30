@@ -11,14 +11,14 @@
             <div class="panel-body">
                 <form name="taskInput">
                     <label for="task">Task</label><br />
-                    <input type="text" name="task" placeholder="Enter a task" ng-model="form.Task"/><br /><br />
-                <label for="notes">Notes(Optional)</label><br />
+                    <input type="text" name="task" placeholder="Enter a task" ng-model="form.Task" /><br /><br />
+                    <label for="notes">Notes(Optional)</label><br />
                     <textarea name="notes" placeholder="Leave some notes" ng-model="form.Notes"></textarea><br /><br />
                     <label for="due">Deadline</label><br />
-                    <input type="datetime-local" name="due" ng-model="form.Due"/><br /><br />
+                    <input type="datetime-local" name="due" ng-model="form.Due" /><br /><br />
 
                     <button type="submit" class="btn btn-primary" ng-click="tc.addTask(form)">Add</button>
-            
+
                 </form>
 
             </div>
@@ -34,7 +34,7 @@
                     <h5><input type="checkbox" /> {{task.Task}}</h5><button class="pull-right" ng-click="tc.deleteTask(task)">Delete</button>
                     <h6>{{task.Notes}}</h6>
                     <h6>{{task.Due}}</h6>
-                    
+
                 </div>
             </div>
         </div>
@@ -147,7 +147,7 @@
                 vm.deleteTask = _deleteTask;
 
                 vm.addTask = _addTask;
-         
+
                 render();
 
                 function render() {
@@ -159,11 +159,12 @@
                     vm.tasks = data;
                 }
 
+                //ADD TASKS SECTION
                 function _addTask(form) {
                     taskService.addTasks(form)
                         .then(onSuccessPostTasks);
                     vm.selectedTask = form;
-                    
+
                 }
 
                 function onSuccessPostTasks(response) {
@@ -171,7 +172,10 @@
                     vm.tasks.push(vm.selectedTask);
                     vm.selectedTask = null;
                 }
+                // END ADD TASKS SECTION
 
+
+                //DELETE TASKS SECTION
                 function _deleteTask(task) {
                     taskService.deleteTasks(task.ID)
                         .then(onSuccessDeleteTasks);
@@ -182,6 +186,7 @@
                     var index = vm.tasks.indexOf(vm.selectedTask);
                     vm.tasks.splice(index);
                 }
+                //END DELETE TASKS SECTION
             }
 
         })();
